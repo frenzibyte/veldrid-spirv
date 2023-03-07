@@ -24,7 +24,7 @@ New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\osx | Out-Null
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\ios | Out-Null
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\android-arm64-v8a | Out-Null
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\android-x86_64 | Out-Null
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\android-x86 | Out-Null
 New-Item -ItemType Directory -Force -Path $PSScriptRoot\download\$configuration\android-armeabi-v7a | Out-Null
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -111,15 +111,15 @@ if( -not $? )
 Write-Host "- libveldrid-spirv.so (Android armeabi-v7a)"
 
 $client.DownloadFile(
-    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-x86_64.so",
-    "$PSScriptRoot/download/$configuration/android-x86_64/libveldrid-spirv.so")
+    "https://github.com/mellinoe/veldrid-spirv/releases/download/$tag/libveldrid-spirv.android-x86.so",
+    "$PSScriptRoot/download/$configuration/android-x86/libveldrid-spirv.so")
 if( -not $? )
 {
     $msg = $Error[0].Exception.Message
-    Write-Error "Couldn't download libveldrid-spirv.so (Android android-x86_64). This most likely indicates the android-x86_64 Android native build failed."
+    Write-Error "Couldn't download libveldrid-spirv.so (Android android-x86). This most likely indicates the android-x86 Android native build failed."
     exit
 }
-Write-Host "- libveldrid-spirv.so (Android android-x86_64)"
+Write-Host "- libveldrid-spirv.so (Android android-x86)"
 
 Write-Host Generating NuGet package...
 
