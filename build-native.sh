@@ -71,9 +71,9 @@ cmake ../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolc
 cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
 
 if [[ $_OSDir == "ios" ]]; then
-    cp ./$_CMakeBuildType-*/* ./
+    cp -r ./$_CMakeBuildType-*/* ./
 fi
 if [[ $_OSDir == "ios-simulator" ]]; then
-    cp ./$_CMakeBuildType-*/* ./
+    cp -r ./$_CMakeBuildType-*/* ./
 fi
 popd
