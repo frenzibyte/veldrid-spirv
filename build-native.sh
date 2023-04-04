@@ -37,7 +37,7 @@ while :; do
             _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
             _CMakePlatform=-DPLATFORM=OS64COMBINED
             _CMakeEnableBitcode=-DENABLE_BITCODE=0
-            _CMakeBuildTarget=veldrid-spirv-combined_genfile
+            _CMakeBuildTarget=veldrid-spirv
             _CMakeGenerator="-G Xcode -T buildsystem=1"
             _CMakeExtraBuildArgs="--config Release"
             _OSDir=ios
