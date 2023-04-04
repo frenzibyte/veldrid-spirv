@@ -35,12 +35,21 @@ while :; do
             ;;
         ios)
             _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
-            _CMakePlatform=-DPLATFORM=OS64COMBINED
+            _CMakePlatform=-DPLATFORM=OS64
             _CMakeEnableBitcode=-DENABLE_BITCODE=0
             _CMakeBuildTarget=veldrid-spirv
             _CMakeGenerator="-G Xcode -T buildsystem=1"
             _CMakeExtraBuildArgs="--config Release"
             _OSDir=ios
+            ;;
+        ios-simulator)
+            _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
+            _CMakePlatform=-DPLATFORM=SIMULATOR64
+            _CMakeEnableBitcode=-DENABLE_BITCODE=0
+            _CMakeBuildTarget=veldrid-spirv
+            _CMakeGenerator="-G Xcode -T buildsystem=1"
+            _CMakeExtraBuildArgs="--config Release"
+            _OSDir=ios-simulator
             ;;
         *)
             __UnprocessedBuildArgs="$__UnprocessedBuildArgs $1"
@@ -62,6 +71,9 @@ cmake ../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolc
 cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
 
 if [[ $_OSDir == "ios" ]]; then
+    cp ./$_CMakeBuildType-*/* ./
+fi
+if [[ $_OSDir == "ios-simulator" ]]; then
     cp ./$_CMakeBuildType-*/* ./
 fi
 popd
