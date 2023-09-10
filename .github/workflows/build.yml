@@ -42,7 +42,7 @@ jobs:
           - os: macos-latest
             build_args: release ios
             build_target: ios
-            artifact_name: build/Release/ios/libveldrid-spirv-combined.a
+            artifact_name: build/Release/ios/libveldrid-spirv.xcframework
     name: ${{ matrix.build_target }} Native Build
 
     steps:
@@ -61,6 +61,12 @@ jobs:
                 ./ext/sync-shaderc.sh
               fi
         shell: bash
+
+      - name: Setup Xcode
+        if: ${{ matrix.build_target == 'ios' }}
+        uses: maxim-lobanov/setup-xcode@v1.5.1
+        with:
+          xcode-version: '11.4' # targets iOS 13.4
 
       - name: Build ${{ matrix.build_target }} Native Library
         run:  |
