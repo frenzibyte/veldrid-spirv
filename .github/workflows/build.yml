@@ -42,7 +42,7 @@ jobs:
           - os: macos-latest
             build_args: release ios
             build_target: ios
-            artifact_name: build/Release/ios/libveldrid-spirv-combined.a
+            artifact_name: build/Release/ios/veldrid-spirv.xcframework.zip
     name: ${{ matrix.build_target }} Native Build
 
     steps:
@@ -70,6 +70,12 @@ jobs:
                 ./build-native.sh ${{ matrix.build_args }}
               fi
         shell: bash
+
+      - name: Compress Framework For Upload
+        if: ${{ matrix.build_target == 'ios' }}
+        run:  |
+              cp -r build/Release/ios/veldrid-spirv.xcframework ./
+              zip -r ${{ matrix.artifact_name }} veldrid-spirv.xcframework
 
       # We can only run per-platform tests on 64-bit architectures
       # https://github.com/actions/setup-dotnet/issues/72
@@ -150,6 +156,14 @@ jobs:
         with:
           name: ios
           path: build/Release/ios
+
+      - name: Uncompress ios archive
+        run:  |
+              unzip -qq build/Release/ios/veldrid-spirv.xcframework.zip -d build/Release/ios
+              rm build/Release/ios/veldrid-spirv.xcframework.zip
+
+      - name: List
+        run: ls; ls ./build; ls ./build/Release; ls ./build/Release/ios; ls ./build/Release/ios/veldrid-spirv.xcframework
 
       - name: Install .NET
         uses: actions/setup-dotnet@v1

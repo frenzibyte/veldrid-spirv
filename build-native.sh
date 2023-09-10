@@ -3,7 +3,6 @@
 scriptPath="$( cd "$(dirname "$0")" ; pwd -P )"
 _CMakeBuildType=Debug
 _CMakeToolchain=
-_CMakeIOSPlatform=
 _CMakeEnableBitcode=
 _OutputPathPrefix=
 _CMakeBuildTarget=veldrid-spirv
@@ -35,21 +34,11 @@ while :; do
             ;;
         ios)
             _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
-            _CMakePlatform=-DPLATFORM=OS64
             _CMakeEnableBitcode=-DENABLE_BITCODE=0
             _CMakeBuildTarget=veldrid-spirv
             _CMakeGenerator="-G Xcode -T buildsystem=1"
             _CMakeExtraBuildArgs="--config Release"
             _OSDir=ios
-            ;;
-        ios-simulator)
-            _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
-            _CMakePlatform=-DPLATFORM=SIMULATOR64
-            _CMakeEnableBitcode=-DENABLE_BITCODE=0
-            _CMakeBuildTarget=veldrid-spirv
-            _CMakeGenerator="-G Xcode -T buildsystem=1"
-            _CMakeExtraBuildArgs="--config Release"
-            _OSDir=ios-simulator
             ;;
         *)
             __UnprocessedBuildArgs="$__UnprocessedBuildArgs $1"
@@ -67,13 +56,28 @@ fi
 
 mkdir -p $_OutputPath
 pushd $_OutputPath
-cmake ../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolchain $_CMakePlatform $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
-cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
 
 if [[ $_OSDir == "ios" ]]; then
-    cp -r ./$_CMakeBuildType-*/* ./
+    mkdir -p device-build
+    pushd device-build
+
+    cmake ../../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolchain -DPLATFORM=OS64 -DDEPLOYMENT_TARGET=13.4 $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
+    cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
+
+    popd
+
+    mkdir -p simulator-build
+    pushd simulator-build
+
+    cmake ../../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolchain -DPLATFORM=SIMULATOR64 -DDEPLOYMENT_TARGET=13.4 $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
+    cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
+
+    popd
+
+    xcodebuild -create-xcframework -framework ./device-build/Release-iphoneos/veldrid-spirv.framework -framework ./simulator-build/Release-iphonesimulator/veldrid-spirv.framework -output ./veldrid-spirv.xcframework
+else
+    cmake ../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolchain $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
+    cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
 fi
-if [[ $_OSDir == "ios-simulator" ]]; then
-    cp -r ./$_CMakeBuildType-*/* ./
-fi
+
 popd
