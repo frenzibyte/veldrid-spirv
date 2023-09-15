@@ -2,7 +2,6 @@
 
 scriptPath="$( cd "$(dirname "$0")" ; pwd -P )"
 _CMakeBuildType=Debug
-_CMakeToolchain=
 _CMakeEnableBitcode=
 _OutputPathPrefix=
 _CMakeBuildTarget=veldrid-spirv
@@ -33,7 +32,6 @@ while :; do
             _OSDir=linux-x64
             ;;
         ios)
-            _CMakeToolchain=-DCMAKE_TOOLCHAIN_FILE=$scriptPath/ios/ios.toolchain.cmake
             _CMakeEnableBitcode=-DENABLE_BITCODE=0
             _CMakeBuildTarget=veldrid-spirv
             _CMakeGenerator="-G Xcode -T buildsystem=1"
@@ -61,7 +59,7 @@ if [[ $_OSDir == "ios" ]]; then
     mkdir -p device-build
     pushd device-build
 
-    cmake ../../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolchain -DPLATFORM=OS64 -DDEPLOYMENT_TARGET=13.4 $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
+    cmake ../../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator -DPLATFORM=OS64 -DDEPLOYMENT_TARGET=13.4 $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
     cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
 
     popd
@@ -69,14 +67,14 @@ if [[ $_OSDir == "ios" ]]; then
     mkdir -p simulator-build
     pushd simulator-build
 
-    cmake ../../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolchain -DPLATFORM=SIMULATOR64 -DDEPLOYMENT_TARGET=13.4 $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
+    cmake ../../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator -DPLATFORM=SIMULATOR64 -DDEPLOYMENT_TARGET=13.4 $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
     cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
 
     popd
 
     xcodebuild -create-xcframework -framework ./device-build/Release-iphoneos/veldrid-spirv.framework -framework ./simulator-build/Release-iphonesimulator/veldrid-spirv.framework -output ./veldrid-spirv.xcframework
 else
-    cmake ../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeToolchain $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
+    cmake ../../.. -DCMAKE_BUILD_TYPE=$_CMakeBuildType $_CMakeGenerator $_CMakeEnableBitcode -DPYTHON_EXECUTABLE=$_PythonExePath -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures"
     cmake --build . --target $_CMakeBuildTarget $_CMakeExtraBuildArgs
 fi
 

@@ -1,5 +1,9 @@
 cmake_minimum_required (VERSION 3.0)
 
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
+    include(ios/ios.toolchain.cmake)
+endif()
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(ext/SPIRV-Cross)
