@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.0)
 
-if ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
+if(IOS)
     include(ios/ios.toolchain.cmake)
 endif()
 
@@ -36,7 +36,7 @@ target_link_libraries(veldrid-spirv
 
 # macOS builds are expected to be dynamic libraries rather than frameworks,
 # only output frameworks for iOS builds.
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
+if(IOS)
     set_target_properties(veldrid-spirv PROPERTIES FRAMEWORK true)
 endif()
 
