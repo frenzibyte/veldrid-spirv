@@ -34,7 +34,12 @@ target_link_libraries(veldrid-spirv
     shaderc
 )
 
-set_target_properties(veldrid-spirv PROPERTIES FRAMEWORK true)
+# macOS builds are expected to be dynamic libraries rather than frameworks,
+# only output frameworks for iOS builds.
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
+    set_target_properties(veldrid-spirv PROPERTIES FRAMEWORK true)
+endif()
+
 set_target_properties(veldrid-spirv PROPERTIES MACOSX_FRAMEWORK_IDENTIFIER "sh.ppy.veldrid-spirv")
 
 set_target_properties(veldrid-spirv PROPERTIES PREFIX "lib")
