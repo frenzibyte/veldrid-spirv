@@ -35,7 +35,7 @@ target_link_libraries(veldrid-spirv
 )
 
 set_target_properties(veldrid-spirv PROPERTIES FRAMEWORK true)
-set_target_properties(veldrid-spirv PROPERTIES FRAMEWORK_BUNDLE_IDENTIFIER "sh.ppy.veldrid-spirv")
+set_target_properties(veldrid-spirv PROPERTIES MACOSX_FRAMEWORK_IDENTIFIER "sh.ppy.veldrid-spirv")
 
 set_target_properties(veldrid-spirv PROPERTIES PREFIX "lib")
 set_target_properties(veldrid-spirv PROPERTIES DEBUG_POSTFIX "")
